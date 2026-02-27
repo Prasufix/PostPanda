@@ -1,9 +1,10 @@
 # PostPanda
 
 PostPanda exists to make small email campaigns from Excel fast and local.
+Since Mail Merge in Word doesn't work reliably on Mac with Excel, I vibe coded this little tool.
 You can write one template, preview each recipient, and send everything without copying text by hand.
 
-## Screenshots
+## Screenshot:
 
 ![PostPanda Upload Screen](docs/screenshots/screen.png)
 
