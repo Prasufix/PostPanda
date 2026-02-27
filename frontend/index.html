@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PostPanda</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <div class="ambient ambient-left"></div>
+    <div class="ambient ambient-right"></div>
+
+    <main class="shell">
+      <header class="hero">
+        <p class="kicker">PostPanda</p>
+        <h1>Smart Mail Merge for Local Workflows</h1>
+        <p class="subtitle">1) Upload Excel  2) Write your message  3) Check preview  4) Send all</p>
+      </header>
+
+      <section class="panel" id="step-upload">
+        <h2>1. Data Source</h2>
+        <div class="field-row">
+          <label class="file-field">
+            <span>Excel File</span>
+            <input id="excelFile" type="file" accept=".xlsx,.xls" class="file-input-native" />
+            <div class="file-picker">
+              <button id="excelPickButton" type="button">Choose file</button>
+              <span id="excelSelectedName" class="file-picker-name" aria-live="polite">No file selected</span>
+            </div>
+          </label>
+          <div class="meta" id="fileMeta">No file uploaded yet.</div>
+        </div>
+        <div class="grid cols-2">
+          <label>
+            <span>Email Column</span>
+            <select id="emailCol"></select>
+          </label>
+        </div>
+        <div class="variable-mapping">
+          <div class="toolbar">
+            <strong>Select Variables</strong>
+            <button id="addVariable" type="button">Add variable</button>
+          </div>
+          <div id="variableRows" class="variable-rows"></div>
+          <p class="hint">Use in message: <code>{{Variable}}</code>, e.g. <code>{{FirstName}}</code>.</p>
+        </div>
+      </section>
+
+      <section class="panel" id="step-content">
+        <h2>2. Content</h2>
+        <label>
+          <span>Subject</span>
+          <input id="subject" type="text" placeholder="Example: Welcome to PostPanda" />
+        </label>
+        <div class="editor-toolbar" role="toolbar" aria-label="Edit message">
+          <button id="fmtBold" type="button">Bold</button>
+          <button id="fmtLink" type="button">Link</button>
+          <button id="fmtVariable" type="button">Variable</button>
+          <button id="fmtParagraph" type="button">Paragraph</button>
+          <button id="fmtBullet" type="button">List</button>
+        </div>
+        <div id="variablePicker" class="variable-picker hidden" role="dialog" aria-label="Insert variable">
+          <div class="variable-picker-head">
+            <strong>Insert variable</strong>
+            <button id="variablePickerClose" type="button" class="variable-picker-close">Close</button>
+          </div>
+          <label>
+            <span>Variable name</span>
+            <input id="variablePickerInput" type="text" placeholder="e.g. FirstName" />
+          </label>
+          <div id="variablePickerSuggestions" class="variable-suggestions"></div>
+          <div class="toolbar">
+            <button id="variablePickerInsert" type="button" class="primary">Insert</button>
+          </div>
+        </div>
+        <div class="hint-inline">Syntax: **bold** and [Link text](https://...)</div>
+        <label>
+          <span>Message ({{Mail}}, {{Variable}}, {{ColumnName}})</span>
+          <textarea id="template" rows="9">Hi {{FirstName}},
+
+your message could go here.
+
+Best regards</textarea>
+        </label>
+      </section>
+
+      <section class="panel" id="step-preview">
+        <h2>3. Preview</h2>
+        <div class="toolbar">
+          <button id="prevBtn" type="button">Previous</button>
+          <span id="previewMeta">Recipient: -</span>
+          <button id="nextBtn" type="button">Next</button>
+          <button id="refreshPreview" type="button">Refresh</button>
+        </div>
+        <div id="previewHtml" class="preview-html">No rendered preview available yet.</div>
+      </section>
+
+      <section class="panel" id="step-smtp">
+        <h2>4. Sending Account</h2>
+        <div class="grid cols-3">
+          <label>
+            <span>Auth Mode</span>
+            <select id="authMode">
+              <option value="password">SMTP Password / App Password</option>
+              <option value="oauth">OAuth Login (without password)</option>
+              <option value="mailapp" selected>Open in Mail App (without password)</option>
+            </select>
+          </label>
+          <label>
+            <span>Provider</span>
+            <select id="provider">
+              <option value="outlook">Outlook / Hotmail</option>
+              <option value="gmail">Gmail</option>
+              <option value="custom">Custom</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="smtpFields">
+          <div class="grid cols-2">
+            <label>
+              <span>SMTP Host</span>
+              <input id="smtpHost" type="text" />
+            </label>
+            <label>
+              <span>SMTP Port</span>
+              <input id="smtpPort" type="number" min="1" max="65535" />
+            </label>
+          </div>
+          <div class="grid cols-2">
+            <label>
+              <span>Sender Email</span>
+              <input id="smtpSender" type="email" placeholder="you@example.com" />
+            </label>
+            <label>
+              <span>Password / App Password</span>
+              <input id="smtpPassword" type="password" placeholder="App password" />
+            </label>
+          </div>
+        </div>
+
+        <div id="oauthFields" class="hidden">
+          <div class="toolbar oauth-toolbar">
+            <button id="oauthConnect" type="button">Connect with OAuth</button>
+            <button id="oauthDisconnect" type="button">Disconnect OAuth</button>
+            <span id="oauthInfo">Not connected.</span>
+          </div>
+          <p class="hint">
+            OAuth requires local client keys in the backend (Google/Microsoft).
+          </p>
+        </div>
+
+        <div id="mailAppFields" class="hidden">
+          <p class="hint">
+            Opens messages in the default mail app (e.g. Outlook).
+            No password needed. You can save as draft there if needed.
+            With provider Outlook, an HTML draft is created (hyperlinks/bold are preserved).
+          </p>
+        </div>
+      </section>
+
+      <section class="panel actions">
+        <div class="toolbar">
+          <button id="sendTest" type="button">Send Test Email</button>
+          <button id="sendAll" type="button" class="primary">Send All Emails</button>
+        </div>
+        <div id="status" class="status">Ready.</div>
+      </section>
+    </main>
+  </body>
+</html>
